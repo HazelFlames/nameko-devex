@@ -3,9 +3,58 @@
 ## _conda_/_mamba_ environment
 
 - Fixed the version of _importlib-metadata_ to 4.13.0 because from v5.0.0 onwards the compatibility with Python 3.7 has been broken.
-- Fixed the version of _alembic_ to 1.9.3 because of importing issues with the old one.
+- Fixed the version of _alembic_ to 1.9.3 because of class importing issues with the old one.
+
+---
 
 # TESTING OUTPUT
+
+## _nex-smoketest_
+
+```sh
+◈ ./test/nex-smoketest.sh local
+Local Smoke Test
+STD_APP_URL=http://localhost:8000
+=== Creating a product id: the_odyssey ===
+{"id": "the_odyssey"}127.0.0.1 - - [13/Feb/2023 14:03:12] "POST /products HTTP/1.1" 200 129 0.050800
+
+=== Getting product id: the_odyssey ===
+127.0.0.1 - - [13/Feb/2023 14:03:12] "GET /products/the_odyssey HTTP/1.1" 200 217 0.042636
+{
+  "id": "the_odyssey",
+  "title": "The Odyssey",
+  "in_stock": 10,
+  "maximum_speed": 5,
+  "passenger_capacity": 101
+}
+=== Creating Order ===
+127.0.0.1 - - [13/Feb/2023 14:03:12] "POST /orders HTTP/1.1" 200 116 0.127800
+{"id": 1}
+=== Getting Order ===
+127.0.0.1 - - [13/Feb/2023 14:03:13] "GET /orders/1 HTTP/1.1" 200 400 0.055583
+{
+  "id": 1,
+  "order_details": [
+    {
+      "id": 1,
+      "product_id": "the_odyssey",
+      "quantity": 1,
+      "price": "100000.99",
+      "image": "http://www.example.com/airship/images/the_odyssey.jpg",
+      "product": {
+        "id": "the_odyssey",
+        "title": "The Odyssey",
+        "in_stock": 9,
+        "maximum_speed": 5,
+        "passenger_capacity": 101
+      }
+    }
+  ]
+}
+(nameko-devex) matt in nameko-devex on  master [!]
+```
+
+## _dev_pytest_
 
 After running ./dev_pytest.sh, the output is the following:
 
@@ -134,6 +183,128 @@ products/test/test_service.py ....................                              
 ================================== 25 passed, 2 warnings in 15.33 seconds ==================================
 (nameko-devex) matt in nameko-devex on  master [!] took 35s
 ```
+
+## _nex-bzt_
+
+- BlazeMeter [test output](https://a.blazemeter.com/app/?public-token=ANkzGzlqqf7gf6EsiOoAUQuFhnAkswi6zRjfAtMHxMKLImHHlT#reports/r-ext-63ea732122621101613580/summary).
+
+## FastAPI
+
+### Local Smoke Test:
+
+```sh
+◈ ./test/nex-smoketest.sh local
+Local Smoke Test
+STD_APP_URL=http://localhost:8000
+=== Creating a product id: the_odyssey ===
+{"id":"the_odyssey"}
+=== Getting product id: the_odyssey ===
+{
+  "id": "the_odyssey",
+  "title": "The Odyssey",
+  "passenger_capacity": 101,
+  "maximum_speed": 5,
+  "in_stock": 10
+}
+=== Creating Order ===
+{"id":268}
+=== Getting Order ===
+{
+  "order_details": [
+    {
+      "quantity": 1,
+      "id": 268,
+      "product_id": "the_odyssey",
+      "price": "100000.99",
+      "product": {
+        "id": "the_odyssey",
+        "maximum_speed": 5,
+        "title": "The Odyssey",
+        "in_stock": 9,
+        "passenger_capacity": 101
+      },
+      "image": "http://www.example.com/airship/images/the_odyssey.jpg"
+    }
+  ],
+  "id": 268
+}
+```
+
+### _nex-bzt_:
+
+BlazeMeter [test output 2](https://a.blazemeter.com/app/?public-token=5if6RerrAkf6Vhhk2F5xH7sPiUwDrej2hf7RTJepv2UZQWSUQW#reports/r-ext-63ea773513245569842915/summary).
+
+### Manual API testing
+
+```sh
+◈ curl http://localhost:8000/docs
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3/swagger-ui.css">
+    <link rel="shortcut icon" href="https://fastapi.tiangolo.com/img/favicon.png">
+    <title>FastAPI - Swagger UI</title>
+    </head>
+    <body>
+    <div id="swagger-ui">
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3/swagger-ui-bundle.js"></script>
+    <!-- `SwaggerUIBundle` is now available on the page -->
+    <script>
+    const ui = SwaggerUIBundle({
+        url: '/openapi.json',
+    oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
+        dom_id: '#swagger-ui',
+        presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIBundle.SwaggerUIStandalonePreset
+        ],
+        layout: "BaseLayout",
+        deepLinking: true,
+        showExtensions: true,
+        showCommonExtensions: true
+    })
+    </script>
+    </body>
+    </html>
+    %
+(nameko-devex) matt in nameko-devex on  master
+```
+
+```sh
+◈ curl http://localhost:8000/redoc
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <title>FastAPI - ReDoc</title>
+    <!-- needed for adaptive design -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+
+    <link rel="shortcut icon" href="https://fastapi.tiangolo.com/img/favicon.png">
+    <!--
+    ReDoc doesn't change outer page styles
+    -->
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    </head>
+    <body>
+    <redoc spec-url="/openapi.json"></redoc>
+    <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"> </script>
+    </body>
+    </html>
+    %
+```
+
+---
 
 # DEPLOYMENT
 
