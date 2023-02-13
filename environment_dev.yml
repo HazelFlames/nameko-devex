@@ -6,6 +6,7 @@ dependencies:
 - python=3.7
 - pip==21
 - pip:
+    - importlib-metadata==4.13.0
     - nameko==v3.0.0-rc9
     - fastapi==0.70.0
     - uvicorn==0.15.0
