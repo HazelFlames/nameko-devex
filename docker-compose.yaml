@@ -2,7 +2,7 @@ version: "3.7"
 services:
   rabbit:
     container_name: ${PREFIX}-hazelflames-nameko-rabbitmq
-    image: rabbitmq:3-management
+    image: rabbitmq:3.7-management
     # ports:              # Uncomment both lines if you want to debug
     #     - "15673:15672" # Exposing RabbitMQ web management on different port for convenience
     restart: unless-stopped

@@ -9,4 +9,4 @@ done
 
 # Run Service
 
-nameko run --config config.yml gateway.service --backdoor 3000
+nameko run --config config.yml --backdoor-port 3000 gateway.service

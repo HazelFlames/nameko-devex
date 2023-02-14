@@ -14,4 +14,4 @@ done
 
 # Run the service
 
-nameko run --config config.yml products.service --backdoor 3000
+nameko run --config config.yml --backdoor-port 3000 products.service
