@@ -19,9 +19,6 @@ USER nameko
 
 WORKDIR /app/nameko
 COPY environment_dev.yml .
-RUN micromamba shell init --shell=bash --prefix=~/micromamba
-
-RUN micromamba env create -f environment_dev.yml -y
-
-RUN eval "$(micromamba shell hook --shell=bash)"; \
-  micromamba activate nameko-devex
+RUN micromamba shell init --shell=bash --prefix=~/micromamba; \
+  source ~\.bashrc; \
+  micromamba env create -f environment_dev.yml -y

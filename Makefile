@@ -9,7 +9,7 @@ PREFIX ?= localdev
 build:
 	docker build --target body -t hazelflames/nameko-body .
 	for image in ${IMAGES}; \
-	do; \
+	do \
 		TAG=${TAG} make -C $$image build-image; \
 	done
 

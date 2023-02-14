@@ -10,4 +10,6 @@ FROM life
 SHELL ["/bin/bash", "-c"]
 USER nameko
 EXPOSE 8000
+RUN source ~\.bashrc; \
+  micromamba activate nameko-devex
 CMD /app/nameko/gateway/run.sh
