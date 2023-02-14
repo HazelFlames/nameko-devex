@@ -20,5 +20,5 @@ USER nameko
 WORKDIR /app/nameko
 COPY environment_dev.yml .
 RUN micromamba shell init --shell=bash --prefix=~/micromamba; \
-  source ~\.bashrc; \
+  source ~/.bashrc; \
   micromamba env create -f environment_dev.yml -y

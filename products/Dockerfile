@@ -10,6 +10,6 @@ FROM body
 SHELL ["/bin/bash", "-c"]
 USER nameko
 EXPOSE 8000
-RUN source ~\.bashrc; \
+RUN source ~/.bashrc; \
   micromamba activate nameko-devex
 CMD /app/nameko/products/run.sh
