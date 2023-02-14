@@ -74,7 +74,7 @@ services:
       RABBIT_MANAGEMENT_PORT: "15672"
 
   products:
-    container_name: ${PREFIX}-nameko-example-products
+    container_name: ${PREFIX}-hazelflames-nameko-products
     image: hazelflames/nameko-products:${TAG}
     depends_on:
       rabbit:
@@ -98,7 +98,7 @@ services:
       RABBIT_MANAGEMENT_PORT: "15672"
 
   gateway:
-    container_name: ${PREFIX}-nameko-example-gateway
+    container_name: ${PREFIX}-hazelflames-nameko-gateway
     image: hazelflames/nameko-gateway:${TAG}
     depends_on:
       rabbit:
