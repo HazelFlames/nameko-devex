@@ -1,30 +1,27 @@
-FROM python:3.7-slim-stretch as base
+FROM mambaorg/micromamba as heart
+SHELL ["/bin/bash", "-c"]
+USER root
 
-RUN apt-get update && \
-    apt-get install --yes curl netcat
+RUN apt update; \
+  apt upgrade --yes; \
+  apt install --yes build-essential curl netcat
 
-RUN pip3 install --upgrade pip
-RUN pip3 install virtualenv
+WORKDIR /app/nameko
+RUN groupadd -r nameko; \
+  useradd -r -g nameko nameko -s /bin/bash; \
+  chown -R nameko:nameko .
 
-RUN virtualenv -p python3 /appenv
+###
 
-ENV PATH=/appenv/bin:$PATH
+FROM heart AS body
+SHELL ["/bin/bash", "-c"]
+USER nameko
 
-RUN groupadd -r nameko && useradd -r -g nameko nameko
+WORKDIR /app/nameko
+COPY environment_dev.yml .
+RUN micromamba shell init --shell=bash --prefix=~/micromamba
 
-RUN mkdir /var/nameko/ && chown -R nameko:nameko /var/nameko/
+RUN micromamba env create -f environment_dev.yml -y
 
-# ------------------------------------------------------------------------
-
-FROM nameko-example-base as builder
-
-RUN apt-get update && \
-    apt-get install --yes build-essential autoconf libtool pkg-config \
-    libgflags-dev libgtest-dev clang libc++-dev automake git libpq-dev
-
-RUN pip install auditwheel
-
-COPY . /application
-
-ENV PIP_WHEEL_DIR=/application/wheelhouse
-ENV PIP_FIND_LINKS=/application/wheelhouse
+RUN eval "$(micromamba shell hook --shell=bash)"; \
+  micromamba activate nameko-devex

@@ -2,8 +2,8 @@
 
 ## _conda_/_mamba_ environment
 
-- Fixed the version of _importlib-metadata_ to 4.13.0 because from v5.0.0 onwards the compatibility with Python 3.7 has been broken.
-- Fixed the version of _alembic_ to 1.9.3 because of class importing issues with the old one.
+- Upgraded and locked the version of _importlib-metadata_ to 4.13.0 because from v5.0.0 onwards the compatibility with Python 3.7 has been broken.
+- Upgraded and locked the version of _alembic_ to 1.9.3 because of class importing issues between Python 3.7.12 and the old version.
 
 ---
 
@@ -308,18 +308,19 @@ BlazeMeter [test output 2](https://a.blazemeter.com/app/?public-token=5if6RerrAk
 
 # DEPLOYMENT
 
-## 1. Docker installation
+I've customized the _Makefile_ to keep using the single command automations with the new code.
 
-### 1.1 WSL2
+## Docker
 
-## 2. _kubectl_ installation
+I've rewritten the _Dockerfile_ and the _docker-compose.yaml_ to better reflect what I've tested in the previous exercise and ensure a consistent behaviour.
 
-## 3. Cluster creation
+- In the _Dockerfile_, I chose to deploy a lightweight _micromamba_ container based on _mamba_ (which is an improved _conda_ but without the science packages and the engine is made in C++ instead of Python) and from there I can manage the versions, dependencies and environments for the Python packages. As with _conda_, _micromamba_ is able to cross fetch dependencies and build packages.
+- In the _docker-compose.yaml_, I've changed the names and versions of the images to be the same as the ones in the testing enviroment.
 
-### 3.1 K3d
+## K3d
 
-## 4. Epinio installation
+## Epinio
 
-### 4.1 Epinio setup
+### Setuo
 
-## 5. Application deployment
+### Deployment

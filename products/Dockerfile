@@ -1,32 +1,13 @@
-FROM nameko-example-builder AS wheels
+FROM hazelflames/nameko-body AS body
+SHELL ["/bin/bash", "-c"]
+USER root
+COPY . /app/nameko/products/
+WORKDIR /app/nameko/products
+RUN chown -R nameko:nameko .;\
+  chmod +x /app/nameko/products/run.sh
 
-COPY . /application
-
-RUN cd /application && pip wheel .
-
-# ------------------------------------------------------------------------
-
-FROM nameko-example-base AS install
-
-COPY --from=wheels /application/wheelhouse /wheelhouse
-
-RUN pip install --no-index -f /wheelhouse nameko_examples_products
-
-# ------------------------------------------------------------------------
-
-FROM nameko-example-base AS service
-
-COPY --from=install /appenv /appenv
-
-COPY config.yml /var/nameko/config.yml
-COPY run.sh /var/nameko/run.sh
-
-RUN chmod +x /var/nameko/run.sh
-
+FROM body
+SHELL ["/bin/bash", "-c"]
 USER nameko
-
-WORKDIR /var/nameko/
-
 EXPOSE 8000
-
-CMD /var/nameko/run.sh;
+CMD /app/nameko/products/run.sh
