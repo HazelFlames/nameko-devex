@@ -1,15 +1,14 @@
-FROM hazelflames/nameko-body AS body
+FROM hazelflames/nameko-body AS life
 SHELL ["/bin/bash", "-c"]
 USER root
 COPY . /app/nameko/products/
 WORKDIR /app/nameko/products
-RUN chown -R nameko:nameko .;\
+RUN chown -R $MAMBA_USER:$MAMBA_USER .;\
   chmod +x /app/nameko/products/run.sh
 
-FROM body
+FROM life
 SHELL ["/bin/bash", "-c"]
-USER nameko
+ENV ENV_NAME=nameko-devex
+
 EXPOSE 8000
-RUN source ~/.bashrc; \
-  micromamba activate nameko-devex
 CMD /app/nameko/products/run.sh

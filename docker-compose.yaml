@@ -60,8 +60,8 @@ services:
     ports:
       - "8001:8000"
     links:
-      - "rabbit:nameko-example-rabbitmq"
-      - "postgres:nameko-example-postgres"
+      - "rabbit"
+      - "postgres"
     environment:
       DB_PASSWORD: "password"
       DB_USER: "postgres"
@@ -84,8 +84,8 @@ services:
     ports:
       - "8002:8000"
     links:
-      - "rabbit:nameko-example-rabbitmq"
-      - "redis:nameko-example-redis"
+      - "rabbit"
+      - "redis"
     environment:
       REDIS_HOST: "redis"
       REDIS_PORT: "6379"
@@ -106,7 +106,7 @@ services:
     ports:
       - "8003:8000"
     links:
-      - "rabbit:nameko-example-rabbitmq"
+      - "rabbit"
     environment:
       RABBIT_PASSWORD: "guest"
       RABBIT_USER: "guest"

@@ -7,18 +7,14 @@ RUN apt update; \
   apt install --yes build-essential curl netcat
 
 WORKDIR /app/nameko
-RUN groupadd -r nameko; \
-  useradd -r -g nameko nameko -s /bin/bash; \
-  chown -R nameko:nameko .
+COPY environment_dev.yml .
+RUN chown -R $MAMBA_USER:$MAMBA_USER .
 
 ###
 
 FROM heart AS body
 SHELL ["/bin/bash", "-c"]
-USER nameko
 
 WORKDIR /app/nameko
-COPY environment_dev.yml .
-RUN micromamba shell init --shell=bash --prefix=~/micromamba; \
-  source ~/.bashrc; \
-  micromamba env create -f environment_dev.yml -y
+RUN micromamba env create -f environment_dev.yml -y
+RUN micromamba clean --all --yes
