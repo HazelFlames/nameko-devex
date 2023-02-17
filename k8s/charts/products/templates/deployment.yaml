@@ -17,9 +17,12 @@ spec:
         app: {{ .Chart.Name }}
     spec:
       containers:
-      - image: nameko/nameko-example-products:{{ .Values.image.tag }}
+      - image: hazelflames/nameko-products:{{ .Values.image.tag }}
+        imagePullPolicy: Never
         name: {{ .Chart.Name }}
         env:
+          - name: PYTHONPATH
+            value: /app/nameko
           - name: REDIS_HOST
             value: cache-redis-master
           - name: REDIS_INDEX

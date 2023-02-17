@@ -6,6 +6,8 @@ PREFIX ?= localdev
 
 # Docker
 
+all: build deploy
+
 build:
 	docker build --target body -t hazelflames/nameko-body .
 	for image in ${IMAGES}; \

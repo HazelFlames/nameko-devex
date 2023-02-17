@@ -17,9 +17,12 @@ spec:
         app: {{ .Chart.Name }}
     spec:
       containers:
-      - image: nameko/nameko-example-orders:{{ .Values.image.tag }}
+      - image: hazelflames/nameko-orders:{{ .Values.image.tag }}
+        imagePullPolicy: Never
         name: {{ .Chart.Name }}
         env:
+          - name: PYTHONPATH
+            value: /app/nameko
           - name: DB_HOST
             value: db-postgresql
           - name: DB_NAME

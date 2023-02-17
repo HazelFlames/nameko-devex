@@ -17,9 +17,12 @@ spec:
         app: {{ .Chart.Name }}
     spec:
       containers:
-      - image: nameko/nameko-example-gateway:{{ .Values.image.tag }}
+      - image: hazelflames/nameko-gateway:{{ .Values.image.tag }}
+        imagePullPolicy: Never
         name: {{ .Chart.Name }}
         env:
+          - name: PYTHONPATH
+            value: /app/nameko
           - name: RABBIT_HOST
             value: broker-rabbitmq
           - name: RABBIT_MANAGEMENT_PORT

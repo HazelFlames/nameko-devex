@@ -2,8 +2,8 @@
 
 ## _conda_/_mamba_ environment
 
-- Upgraded and locked the version of _importlib-metadata_ to 4.13.0 because from v5.0.0 onwards the compatibility with Python 3.7 has been broken.
-- Upgraded and locked the version of _alembic_ to 1.9.3 because of class importing issues between Python 3.7.12 and the old version.
+- Upgraded and locked the version of _importlib-metadata_ to 4.13.0 because from v5.0.0 upwards the compatibility with Python 3.7 has been broken.
+- Upgraded and locked the version of _alembic_ to 1.9 because of class importing issues with the _sqlalchemy_ and _nameko-sqlalchemy_ versions.
 
 ---
 
@@ -308,19 +308,35 @@ BlazeMeter [test output 2](https://a.blazemeter.com/app/?public-token=5if6RerrAk
 
 # DEPLOYMENT
 
-I've customized the _Makefile_ to keep using the single command automations with the new code.
+I've customized the _Makefile_ to keep using the single command automation with the new code.
 
-## Docker
+## Docker + Compose
 
-I've rewritten the _Dockerfile_ and the _docker-compose.yaml_ to better reflect what I've tested in the previous exercise and ensure a consistent behaviour.
+I've rewritten the _Dockerfile_ and the _docker-compose.yaml_ to better reflect what I've tested in the previous exercise and ensure consistent behavior.
 
-- In the _Dockerfile_, I chose to deploy a lightweight _micromamba_ container based on _mamba_ (which is an improved _conda_ but without the science packages and the engine is made in C++ instead of Python) and from there I can manage the versions, dependencies and environments for the Python packages. As with _conda_, _micromamba_ is able to cross fetch dependencies and build packages.
-- In the _docker-compose.yaml_, I've changed the names and versions of the images to be the same as the ones in the testing enviroment.
+- In the _Dockerfile_, I chose to deploy a lightweight _micromamba_ container based on _mamba_ (which is an improved _conda_ but without the science packages, and the engine is made in C++ instead of Python), and from there I can manage the versions, dependencies, and environments for the Python packages. As with _conda_, _micromamba_ can cross-fetch dependencies and build packages.
+- In the _docker-compose.yaml_, I've changed the names and versions of the images to be the same as in the testing environment.
+- I've changed the network implementation in the _docker-compose.yaml_ from _links_ to _network_ as recommended by the official documentation and created the respective aliases for each service.
+- I had to add the _PYTHONPATH_ variable in the _docker-compose.yaml_ for the modules to be correctly initialized without altering the application source code.
 
-## K3d
+### BlazeMeter
+
+BlazeMeter [test output 3](https://a.blazemeter.com/app/?public-token=516OBeX57tmrvTvqs9YB3YNI1Ax0sqpQ93iL4hLugmfooHDYF3#reports/r-ext-63efca760ec3e714010604/summary)
+
+## KinD + Helm
+
+- After installation and setup of _KinD_, _kubectl_ and _Helm_, the deployment is pretty straightforward. It's just a matter of passing a _Cart_ (with its respective _Values.yaml_ and appropriate variables) file to _Helm_ and it does all the rest with magic!
+- The Charts were updated to use the Docker images I created in the previous exercise.
+- _Bash_ scripts were created to prepare all the underlying infrastructure in _KinD_ and _Helm_, with rollback steps in case of failure and they can all be called via make commands defined in the _k8s/Makefile_.
+- The application images need to be cloned to KinD internal image registry and this is done by the _make deploy_ step.
+
+### BlazeMeter
+
+BlazeMeter [test output 4](https://a.blazemeter.com/app/?public-token=516OBeX57tmrvTvqs9YB3YNI1Ax0sqpQ93iL4hLugmfooHDYF3#reports/r-ext-63efca760ec3e714010604/summary)
 
 ## Epinio
 
-### Setuo
+### Setup
 
-### Deployment
+- A K3d cluster was created as per Henrique's recommendations
+

@@ -1,117 +1,43 @@
+SHELL = /bin/bash
+
 HOST ?= localhost
 NAMESPACE ?= nameko
-CONTEXT ?= kind-$(NAMESPACE)
+CONTEXT ?= kind-${NAMESPACE}
 TAG ?= dev
 
-# all in one
-kind-create-cluster:
-	kind create cluster --config kind-config.yaml --name $(NAMESPACE)
-	kind export kubeconfig --name $(NAMESPACE)
-	NEWURL=$$(kubectl config view | grep -B1 'name: $(CONTEXT)' | grep server: | awk '{print $$2}' | sed -e 's/0.0.0.0/$(HOST)/') ; \
-		kubectl config set-cluster $(CONTEXT) --server=$${NEWURL} --insecure-skip-tls-verify=true 
+all: startup requirements deploy
 
-# src: https://kind.sigs.k8s.io/docs/user/ingress/
-kind-setup-ingress:
-	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
-	sleep 5
-	kubectl wait --namespace ingress-nginx \
-		--for=condition=ready pod \
-		--selector=app.kubernetes.io/component=controller \
-		--timeout=90s
+startup: kind.startup.bash kind.wipe.bash
+	if ./kind.startup.bash ${HOST} ${NAMESPACE};\
+	then\
+		true;\
+	else\
+		./kind.wipe.bash ${NAMESPACE};\
+	fi
 
-undeployK8:
-	# $(MAKE) delete-namespace
-	kind delete cluster --name $(NAMESPACE)
+requirements: helm.req.deploy.bash
+	if ./helm.req.deploy.bash ${NAMESPACE} ${CONTEXT};\
+	then\
+		true;\
+	else\
+		./helm.req.wipe.bash ${NAMESPACE} ${CONTEXT};\
+	fi
 
-deployK8: kind-create-cluster kind-setup-ingress
-	# $(MAKE) init-helm
-	$(MAKE) create-namespace
-	$(MAKE) deploy-dependencies
-	$(MAKE) install-charts
+deploy: charts helm.app.deploy.bash helm.app.wipe.bash
+# These images can be build using make build in the parent folder.
+	kind load docker-image --name nameko hazelflames/nameko-gateway:dev hazelflames/nameko-products:dev hazelflames/nameko-orders:dev
+	if ./helm.app.deploy.bash ${NAMESPACE} ${CONTEXT};\
+	then\
+		true;\
+	else\
+		./helm.app.wipe.bash ${NAMESPACE} ${CONTEXT};\
+	fi
 
-# test
-smoke-test:
-	../test/nex-smoketest.sh http://localhost
+wipe: wipe-app wipe-req kind.wipe.bash
+	./kind.wipe.bash ${NAMESPACE}
 
-perf-test:
-	cd ..; ./test/nex-bzt.sh http://localhost
+wipe-app: helm.app.wipe.bash
+	./helm.app.wipe.bash ${NAMESPACE} ${CONTEXT}
 
-# kubectl short-cuts
-get-nodes:
-	kubectl --context=$(CONTEXT) --namespace $(NAMESPACE) get nodes
-
-get-services:
-	kubectl --context=$(CONTEXT) --namespace $(NAMESPACE) get services -o wide
-
-get-pods:
-	kubectl --context=$(CONTEXT) --namespace $(NAMESPACE) get pods -o wide
-
-watch-svcs-pods:
-	watch -n 0 \
-	'kubectl --context=$(CONTEXT) --namespace $(NAMESPACE) get services -o wide; echo "---"; \
-	 kubectl --context=$(CONTEXT) --namespace $(NAMESPACE) get pods -o wide'
-
-get-logs:
-	kubectl get pods --context=$(CONTEXT) --namespace $(NAMESPACE) --no-headers=true | awk '{print $$1}' | grep $(name) | xargs kubectl --context=$(CONTEXT) --namespace $(NAMESPACE) logs -f
-
-describe-pod:
-	kubectl get pods --context=$(CONTEXT) --namespace $(NAMESPACE) --no-headers=true | awk '{print $$1}' | grep $(name) | xargs kubectl --context=$(CONTEXT) --namespace $(NAMESPACE) describe pod
-
-describe-svc:
-	kubectl get services --context=$(CONTEXT) --namespace $(NAMESPACE) --no-headers=true | awk '{print $$1}' | grep $(name) | xargs kubectl --context=$(CONTEXT) --namespace $(NAMESPACE) describe service
-
-create-namespace:
-	kubectl --context=$(CONTEXT) apply -f namespace.yaml
-
-delete-namespace:
-	kubectl --context=$(CONTEXT) delete -f namespace.yaml
-
-# helm
-init-helm:
-	helm repo add stable https://charts.helm.sh/stable
-	helm repo update
-
-list-charts:
-	helm --kube-context=$(CONTEXT) list --namespace=$(NAMESPACE)
-
-deploy-dependencies:
-	helm upgrade broker stable/rabbitmq --install \
-		--namespace $(NAMESPACE) --kube-context=$(CONTEXT)
-	helm upgrade db stable/postgresql --install \
-		--set postgresqlDatabase=orders \
-		--namespace $(NAMESPACE) --kube-context=$(CONTEXT)
-	helm upgrade cache stable/redis --install \
-		--namespace $(NAMESPACE) --kube-context=$(CONTEXT)
-	kubectl --context=$(CONTEXT) --namespace=$(NAMESPACE) get pods
-
-install-charts:
-	cd ..; $(MAKE) build
-	kind load docker-image $(NAMESPACE)/nameko-example-gateway:$(TAG) --name $(NAMESPACE)
-	kind load docker-image $(NAMESPACE)/nameko-example-orders:$(TAG) --name $(NAMESPACE)
-	kind load docker-image $(NAMESPACE)/nameko-example-products:$(TAG) --name $(NAMESPACE)
-	$(MAKE) SERVICE_NAME=gateway install-chart
-	$(MAKE) SERVICE_NAME=orders install-chart
-	$(MAKE) SERVICE_NAME=products install-chart
-
-test-charts:
-	$(MAKE) SERVICE_NAME=gateway test-chart
-	$(MAKE) SERVICE_NAME=orders test-chart
-	$(MAKE) SERVICE_NAME=products test-chart
-
-lint-charts:
-	$(MAKE) SERVICE_NAME=gateway lint-chart
-	$(MAKE) SERVICE_NAME=orders lint-chart
-	$(MAKE) SERVICE_NAME=products lint-chart
-
-test-chart:
-	helm upgrade $(SERVICE_NAME) charts/$(SERVICE_NAME) --install \
-	--namespace=$(NAMESPACE) --kube-context $(CONTEXT) \
-	--dry-run --debug --set image.tag=$(TAG)
-
-install-chart:
-	helm upgrade $(SERVICE_NAME) charts/$(SERVICE_NAME) --install \
-	--namespace=$(NAMESPACE) --kube-context=$(CONTEXT) \
-	--set image.tag=$(TAG)
-
-lint-chart:
-	helm lint charts/$(SERVICE_NAME) --strict
+wipe-req: helm.req.wipe.bash
+	./helm.req.wipe.bash ${NAMESPACE} ${CONTEXT}
