@@ -6,7 +6,7 @@ RUN apt update; \
   apt upgrade --yes; \
   apt install --yes build-essential curl netcat
 
-WORKDIR /app/nameko
+WORKDIR /app
 COPY environment_dev.yml .
 RUN chown -R $MAMBA_USER:$MAMBA_USER .
 
@@ -15,6 +15,7 @@ RUN chown -R $MAMBA_USER:$MAMBA_USER .
 FROM heart AS body
 SHELL ["/bin/bash", "-c"]
 
-WORKDIR /app/nameko
-RUN micromamba env create -f environment_dev.yml -y
-RUN micromamba clean --all --yes
+WORKDIR /app
+RUN source "/usr/local/bin/_activate_current_env.sh";\
+  micromamba env create -f environment_dev.yml -y;\
+  micromamba clean --all --yes

@@ -12,6 +12,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      default:
+        aliases:
+          - rabbit
+          - nameko-example-rabbit
 
   postgres:
     container_name: ${PREFIX}-hazelflames-nameko-postgres
@@ -28,6 +33,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      default:
+        aliases:
+          - postgres
+          - nameko-example-postgres
 
   redis:
     container_name: ${PREFIX}-hazelflames-nameko-redis
@@ -48,6 +58,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      default:
+        aliases:
+          - redis
+          - nameko-example-redis
 
   orders:
     container_name: ${PREFIX}-hazelflames-nameko-orders
@@ -57,12 +72,17 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+      gateway:
+        condition: service_started
     ports:
       - "8001:8000"
-    links:
-      - "rabbit"
-      - "postgres"
+    #links:
+    #  - "rabbit:nameko-example-rabbitmq"
+    #  - "postgres:nameko-example-postgres"
+    networks:
+      - default
     environment:
+      PYTHONPATH: "/app/nameko"
       DB_PASSWORD: "password"
       DB_USER: "postgres"
       DB_HOST: "postgres"
@@ -81,12 +101,17 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      gateway:
+        condition: service_started
     ports:
       - "8002:8000"
-    links:
-      - "rabbit"
-      - "redis"
+    #links:
+    #  - "rabbit:nameko-example-rabbitmq"
+    #  - "redis:nameko-example-redis"
+    networks:
+      - default
     environment:
+      PYTHONPATH: "/app/nameko"
       REDIS_HOST: "redis"
       REDIS_PORT: "6379"
       REDIS_INDEX: "11"
@@ -105,11 +130,17 @@ services:
         condition: service_healthy
     ports:
       - "8003:8000"
-    links:
-      - "rabbit"
+    #links:
+    #  - "rabbit:nameko-examples-rabbitmq"
+    networks:
+      - default
     environment:
+      PYTHONPATH: "/app/nameko"
       RABBIT_PASSWORD: "guest"
       RABBIT_USER: "guest"
       RABBIT_HOST: "rabbit"
       RABBIT_PORT: "5672"
       RABBIT_MANAGEMENT_PORT: "15672"
+
+networks:
+  default:
