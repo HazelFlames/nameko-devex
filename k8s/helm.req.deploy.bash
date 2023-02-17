@@ -2,10 +2,10 @@
 
 if [[ $# == 0 ]]
 then
-  echo -e "\nUsing default values!\n(NAMESPACE=\"nameko\" and CONTEXT=\"kind-nameko\")"
+  echo -e "\nUsing default values!\n(NAMESPACE=\"nameko\" and CONTEXT=\"kind-nameko\")\n"
 elif [[ $# != 2 ]]
 then
-  echo -e "\nCorrect usage:\n./helm.startup.bash <NAMESPACE> <CONTEXT>"
+  echo -e "\nCorrect usage:\n./helm.startup.bash <NAMESPACE> <CONTEXT>\n"
   exit 1
 fi
 
@@ -13,7 +13,7 @@ if type helm &>/dev/null
 then
   true
 else
-  echo -e "\nHelm is needed for this script. Please install it and make sure the correct \$PATH is set.\nAborting..."
+  echo -e "\nHelm is needed for this script. Please install it and make sure the correct \$PATH is set.\nAborting...\n"
   exit 127
 fi
 
@@ -22,41 +22,41 @@ CONTEXT=${2:-"kind-nameko"}
 
 if helm repo add stable https://charts.helm.sh/stable
 then
-  echo -e "\nStable charts repository added!"
+  echo -e "\nStable charts repository added!\n"
 else
-  echo -e "\nAddition of charts repository failed!\nAborting..."
+  echo -e "\nAddition of charts repository failed!\nAborting...\n"
   exit 1
 fi
 
 if helm repo add bitnami https://charts.bitnami.com/bitnami
 then
-  echo -e "Bitnami charts repository added!\nStarting requirements deployment..."
+  echo -e "Bitnami charts repository added!\n\nStarting requirements deployment...\n"
 else
-  echo -e "\nAddition of charts repository failed!\nAborting..."
+  echo -e "Addition of charts repository failed!\nAborting...\n"
   exit 1
 fi
 
 if helm install --kube-context="$CONTEXT" --namespace="$NAMESPACE" broker stable/rabbitmq
 then
-  echo -e "\nRabbitMQ deployed.\nStarting database deployment..."
+  echo -e "RabbitMQ deployed.\n\nStarting database deployment...\n"
 else
-  echo -e "\nCouldn't deploy RabbitMQ!\nAborting..."
+  echo -e "Couldn't deploy RabbitMQ!\nAborting...\n"
   exit 1
 fi
 
 if helm install --kube-context="$CONTEXT" --namespace="$NAMESPACE" db stable/postgresql --set postgresqlDatabase=orders
 then
-  echo -e "\nPostgreSQL deployed!\nStarting cache deployment..."
+  echo -e "PostgreSQL deployed!\n\nStarting cache deployment...\n"
 else
-  echo -e "\nCouldn't deploy PostgreSQL!\n Aborting..."
+  echo -e "Couldn't deploy PostgreSQL!\n Aborting...\n"
   exit 1
 fi
 
 if helm install --kube-context="$CONTEXT" --namespace="$NAMESPACE" cache stable/redis
 then
-  echo -e "\nRedis deployed!\n\nAll requirements deployed!\n"
+  echo -e "Redis deployed!\n\nAll requirements deployed!\n"
 else
-  echo -e "\nCouldn't deploy Redis!\n Aborting..."
+  echo -e "Couldn't deploy Redis!\n Aborting...\n"
   exit 1
 fi
 

@@ -7,12 +7,14 @@ TAG ?= dev
 
 all: startup requirements deploy
 
-startup: kind.startup.bash kind.wipe.bash
-	if ./kind.startup.bash ${HOST} ${NAMESPACE};\
+deploy: charts helm.app.deploy.bash helm.app.wipe.bash
+# These images can be build using make build in the parent folder.
+	kind load docker-image --name nameko hazelflames/nameko-gateway:dev hazelflames/nameko-products:dev hazelflames/nameko-orders:dev
+	if ./helm.app.deploy.bash ${NAMESPACE} ${CONTEXT};\
 	then\
 		true;\
 	else\
-		./kind.wipe.bash ${NAMESPACE};\
+		./helm.app.wipe.bash ${NAMESPACE} ${CONTEXT};\
 	fi
 
 requirements: helm.req.deploy.bash
@@ -23,15 +25,18 @@ requirements: helm.req.deploy.bash
 		./helm.req.wipe.bash ${NAMESPACE} ${CONTEXT};\
 	fi
 
-deploy: charts helm.app.deploy.bash helm.app.wipe.bash
-# These images can be build using make build in the parent folder.
-	kind load docker-image --name nameko hazelflames/nameko-gateway:dev hazelflames/nameko-products:dev hazelflames/nameko-orders:dev
-	if ./helm.app.deploy.bash ${NAMESPACE} ${CONTEXT};\
+startup: kind.startup.bash kind.wipe.bash
+	if ./kind.startup.bash ${HOST} ${NAMESPACE};\
 	then\
 		true;\
 	else\
-		./helm.app.wipe.bash ${NAMESPACE} ${CONTEXT};\
+		./kind.wipe.bash ${NAMESPACE};\
 	fi
+
+test-bm:
+# activate the Python enviroment first
+	cd ..;\
+	./test/nex-bzt.sh http://localhost:80
 
 wipe: wipe-app wipe-req kind.wipe.bash
 	./kind.wipe.bash ${NAMESPACE}

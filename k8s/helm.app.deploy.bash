@@ -2,10 +2,10 @@
 
 if [[ $# == 0 ]]
 then
-  echo -e "\nUsing default values!\n(NAMESPACE=\"nameko\" and CONTEXT=\"kind-nameko\")"
+  echo -e "\nUsing default values!\n(NAMESPACE=\"nameko\" and CONTEXT=\"kind-nameko\")\n"
 elif [[ $# != 2 ]]
 then
-  echo -e "\nCorrect usage:\n./helm.startup.bash <NAMESPACE> <CONTEXT>"
+  echo -e "\nCorrect usage:\n./helm.startup.bash <NAMESPACE> <CONTEXT>\n"
   exit 1
 fi
 
@@ -13,7 +13,7 @@ if type helm &>/dev/null
 then
   true
 else
-  echo -e "\nHelm is needed for this script. Please install it and make sure the correct \$PATH is set.\nAborting..."
+  echo -e "\nHelm is needed for this script. Please install it and make sure the correct \$PATH is set.\nAborting...\n"
   exit 127
 fi
 
@@ -22,25 +22,25 @@ CONTEXT=${2:-"kind-nameko"}
 
 if helm install --kube-context="$CONTEXT" --namespace="$NAMESPACE" gateway charts/gateway
 then
-  echo -e "\nGateway module deployed.\nStarting products module deployment..."
+  echo -e "Gateway module deployed.\n\nStarting products module deployment..."
 else
-  echo -e "\nCouldn't deploy gateway module!\nAborting..."
+  echo -e "Couldn't deploy gateway module!\nAborting...\n"
   exit 1
 fi
 
 if helm install --kube-context="$CONTEXT" --namespace="$NAMESPACE" products charts/products
 then
-  echo -e "\nProducts module deployed!\nStarting orders module deployment..."
+  echo -e "Products module deployed!\n\nStarting orders module deployment..."
 else
-  echo -e "\nCouldn't deploy products module!\n Aborting..."
+  echo -e "Couldn't deploy products module!\n Aborting...\n"
   exit 1
 fi
 
 if helm install --kube-context="$CONTEXT" --namespace="$NAMESPACE" orders charts/orders
 then
-  echo -e "\nOrders module deployed!\n\nAll modules deployed! Exiting..."
+  echo -e "Orders module deployed!\n\nAll modules deployed! Exiting...\n"
 else
-  echo -e "\nCouldn't deploy orders module!\n Aborting..."
+  echo -e "Couldn't deploy orders module!\n Aborting...\n"
   exit 1
 fi
 

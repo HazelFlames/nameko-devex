@@ -18,5 +18,9 @@ build:
 deploy:
 	bash -c "trap 'make undeploy' EXIT; PREFIX=${PREFIX} TAG=${TAG} docker compose up"
 
+test-bm:
+# activate the Python enviroment first
+	./test/nex-bzt.sh http://localhost:8000
+
 undeploy:
 	PREFIX=${PREFIX} docker compose down

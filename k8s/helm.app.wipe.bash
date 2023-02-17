@@ -8,7 +8,7 @@ for i in gateway orders products
 do
   if helm uninstall $i --kube-context="$CONTEXT" --namespace="$NAMESPACE"
   then
-    echo -e "\"$i\" deleted."
+    echo -e "\"$i\" deleted.\n"
   else
     echo -e "Couldn't delete \"$i\". Check manually!\n"
     exit 1
