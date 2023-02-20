@@ -1,0 +1,7 @@
+name: products
+configuration:
+  instances: 1
+  environment:
+    PYTHONPATH: "/app/source"
+staging:
+  builder: "paketobuildpacks/python"

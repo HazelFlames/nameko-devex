@@ -5,7 +5,7 @@ then
   echo -e "\nUsing default values!\n(NAMESPACE=\"nameko\" and CONTEXT=\"kind-nameko\")\n"
 elif [[ $# != 2 ]]
 then
-  echo -e "\nCorrect usage:\n./helm.startup.bash <NAMESPACE> <CONTEXT>\n"
+  echo -e "\nCorrect usage:\n./helm.req.deploy.bash <NAMESPACE> <CONTEXT>\n"
   exit 1
 fi
 

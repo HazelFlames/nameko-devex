@@ -338,5 +338,9 @@ BlazeMeter [test output 4](https://a.blazemeter.com/app/?public-token=516OBeX57t
 
 ### Setup
 
-- A K3d cluster was created as per Henrique's recommendations
+- A K3d cluster was created as per Henrique's recommendations following the official documentation from Epinio.
+- The creation is automated and can be called by the Makefile inside the `epinio` folder.
 
+### Deployment
+
+- The deployment of the services and the application can also be called by the Makefile and its options are set in the manifest file `epinio.yaml` in the root of the project.
