@@ -3,7 +3,7 @@ SHELL = /bin/bash
 NAMESPACE ?= epinio
 TAG ?= dev
 
-all: 
+all: startup login 
 
 startup: k3d.startup.bash k3d.wipe.bash
 	if ./k3d.startup.bash ${HOST} ${NAMESPACE};\
