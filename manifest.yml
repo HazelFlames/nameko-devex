@@ -3,7 +3,5 @@ configuration:
   instances: 1
   environment:
     FASTAPI: "X"
-staging:
-  builder: "paketobuildpacks/python"
 origin:
   path: .
