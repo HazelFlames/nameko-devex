@@ -44,5 +44,5 @@ wipe: wipe-app wipe-req k3d.wipe.bash
 wipe-app: epinio.app.wipe.bash
 	./epinio.app.wipe.bash ${APPNAME} ${WORKSPACE}
 
-wipe-req epinio.req.wipe.bash
+wipe-req: epinio.req.wipe.bash
 	./epinio.req.wipe.bash ${WORKSPACE}
