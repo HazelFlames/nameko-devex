@@ -1,18 +1,18 @@
 #!/bin/bash
 
-echo -e "\nRemoving the application..."
-# for i in gateway orders products
-# do
-#   if epinio app delete $i
-#   then
-#     echo -e "\"$i\" deleted.\n"
-#   else
-#     echo -e "Couldn't delete \"$i\". Check manually!\n"
-#     exit 1
-#   fi
-# done
+APPNAME=${1:-"nameko"}
+WORKSPACE=${2:-"workspace"}
 
-if epinio app delete nameko
+if epinio target "$WORKSPACE"
+then
+  echo -e "Workspace selected.\n\nStarting removal of the application..."
+else
+  echo -e "Couldn't select workspace.\nAborting...\n"
+  exit 1
+fi
+
+echo -e "\nRemoving the application..."
+if epinio app delete "$APPNAME"
 then
   echo -e "Application removed from Epinio.\n"
 else

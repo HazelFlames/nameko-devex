@@ -27,9 +27,9 @@ else
   exit 1
 fi
 
-if epinio app push 
+if epinio app push ../manifest.yml -b redis postgres rabbit
 then
-  echo -e "X deployed!\n\nAll modules deployed! Exiting...\n"
+  echo -e "Application deployed!\n\nAll modules deployed! Exiting...\n"
 else
   echo -e "Couldn't deploy the application on Epinio!\n Aborting...\n"
   exit 1

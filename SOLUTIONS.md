@@ -343,4 +343,4 @@ BlazeMeter [test output 4](https://a.blazemeter.com/app/?public-token=516OBeX57t
 
 ### Deployment
 
-- The deployment of the services and the application can also be called by the Makefile and its options are set in the manifest file `epinio.yaml` in the root of the project.
+- The deployment of the services and the application can also be called by the Makefile and its options are set in the `manifest.yaml` file.

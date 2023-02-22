@@ -1,11 +1,18 @@
 SHELL = /bin/bash
 
+APPNAME ?= nameko
 NAMESPACE ?= epinio
 WORKSPACE ?= workspace
 
 all: startup login requirements deploy
 
 deploy: epinio.app.deploy.bash epinio.app.wipe.bash
+	if ./epinio.app.deploy.bash ${WORKSPACE};\
+	then\
+		true;\
+	else\
+		./epinio.app.wipe.bash ${WORKSPACE};\
+	fi
 
 login: epinio.login.bash
 	./epinio.login.bash
@@ -31,5 +38,11 @@ test-bm:
 	cd ..;\
 	./test/nex-bzt.sh http://localhost:80
 
-wipe: k3d.wipe.bash
+wipe: wipe-app wipe-req k3d.wipe.bash
 	./k3d.wipe.bash ${NAMESPACE}
+
+wipe-app: epinio.app.wipe.bash
+	./epinio.app.wipe.bash ${APPNAME} ${WORKSPACE}
+
+wipe-req epinio.req.wipe.bash
+	./epinio.req.wipe.bash ${WORKSPACE}

@@ -1,5 +1,14 @@
 #!/bin/bash
 
+WORKSPACE=${1:-"workspace"}
+
+if epinio target "$WORKSPACE"
+then
+  echo -e "Workspace selected.\n\nStarting removal of required services..."
+else
+  echo -e "Couldn't select workspace.\nAborting...\n"
+  exit 1
+fi
 
 echo -e "\nRemoving the services...\n"
 for i in redis postgres rabbit

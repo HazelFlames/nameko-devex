@@ -1,8 +1,8 @@
 SHELL=/bin/bash
 
 IMAGES ?= gateway orders products
-TAG ?= dev
 PREFIX ?= localdev
+TAG ?= dev
 
 # Docker
 
