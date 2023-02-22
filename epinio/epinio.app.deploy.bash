@@ -2,10 +2,10 @@
 
 if [[ $# == 0 ]]
 then
-  echo -e "\nUsing default values!\n(WORKSPACE=\"workspace\".)\n"
-elif [[ $# != 1 ]]
+  echo -e "\nUsing default values!\n(APPNAME=\"nameko\" and WORKSPACE=\"workspace\".)\n"
+elif [[ $# != 2 ]]
 then
-  echo -e "\nCorrect usage:\n./epinio.app.deploy.bash <WORKSPACE>\n"
+  echo -e "\nCorrect usage:\n./epinio.app.deploy.bash <APPNAME> <WORKSPACE>\n"
   exit 1
 fi
 
@@ -28,7 +28,7 @@ else
   exit 1
 fi
 
-if epinio target "$WORKSPACE"
+if epinio app create "$APPNAME"
 then
   echo -e "Application slot created.\n\nStarting binding of the services..."
 else
@@ -64,7 +64,7 @@ if epinio app push ../manifest.yml
 then
   echo -e "Application deployed!\n\nAll modules deployed! Exiting...\n"
 else
-  echo -e "Couldn't deploy the application on Epinio!\n Aborting...\n"
+  echo -e "Couldn't deploy the application on Epinio!\nAborting...\n"
   exit 1
 fi
 
