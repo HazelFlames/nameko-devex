@@ -7,11 +7,11 @@ WORKSPACE ?= workspace
 all: startup login requirements deploy
 
 deploy: epinio.app.deploy.bash epinio.app.wipe.bash
-	if ./epinio.app.deploy.bash ${WORKSPACE};\
+	if ./epinio.app.deploy.bash ${APPNAME} ${WORKSPACE};\
 	then\
 		true;\
 	else\
-		./epinio.app.wipe.bash ${WORKSPACE};\
+		./epinio.app.wipe.bash ${APPNAME} ${WORKSPACE};\
 	fi
 
 login: epinio.login.bash

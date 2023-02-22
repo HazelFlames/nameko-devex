@@ -4,10 +4,10 @@ WORKSPACE=${1:-"workspace"}
 
 echo -e "\nRetrieving environment variables from Epinio services...\n"
 
-AMQP_URI="amqp://guest:guest@$WORKSPACE-rabbit-rabbitmq.$WORKSPACE.svc.cluster.local:5672"
+AMQP_URI="amqp://user:$(cat /configurations/*-rabbitmq/rabbitmq-password)@$WORKSPACE-rabbit-rabbitmq.$WORKSPACE.svc.cluster.local:5672"
 export AMQP_URI
 
-POSTGRES_URI="postgresql://postgres:postgres@$WORKSPACE-postgres-postgresql.$WORKSPACE.svc.cluster.local:5432/devex"
+POSTGRES_URI="postgresql://postgres:$(cat /configurations/*-postgresql/postgres-password)@$WORKSPACE-postgres-postgresql.$WORKSPACE.svc.cluster.local:5432/devex"
 export POSTGRES_URI
 
 REDIS_URI="redis://$WORKSPACE-redis-redis.$WORKSPACE.svc.cluster.local:6379"

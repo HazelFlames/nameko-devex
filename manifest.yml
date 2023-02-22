@@ -4,6 +4,6 @@ configuration:
   environment:
     FASTAPI: "X"
 staging:
-  builder: "paketobuildpacks/builder:tiny"
+  builder: "paketobuildpacks/python"
 origin:
   path: .
