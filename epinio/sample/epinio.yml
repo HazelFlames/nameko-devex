@@ -1,0 +1,8 @@
+name: todo
+configuration:
+  instances: 1
+  environment:
+    EPINIO: "yes"
+    PORT: "8080"
+origin:
+  path: .

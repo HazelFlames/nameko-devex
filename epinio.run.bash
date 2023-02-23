@@ -14,7 +14,7 @@ REDIS_URI="redis://$WORKSPACE-redis-redis.$WORKSPACE.svc.cluster.local:6379"
 export REDIS_URI
 
 # Comment the line below if you don't want to use FastAPI.
-export FASTAPI=X
+#export FASTAPI=X
 
 # Database creation 
 python -c """

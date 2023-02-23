@@ -1,4 +1,4 @@
-# CUSTOMIZATIONS
+# CUSTOMIZATIONS*conda*
 
 ## _conda_/_mamba_ environment
 
@@ -308,16 +308,16 @@ BlazeMeter [test output 2](https://a.blazemeter.com/app/?public-token=5if6RerrAk
 
 # DEPLOYMENT
 
-I've customized the _Makefile_ to keep using the single command automation with the new code.
+I've customized the `Makefile` to keep using the single command automation with the new code.
 
 ## Docker + Compose
 
-I've rewritten the _Dockerfile_ and the _docker-compose.yaml_ to better reflect what I've tested in the previous exercise and ensure consistent behavior.
+I've rewritten the `Dockerfile`(s) and the `docker-compose.yaml` to better reflect what I've tested in the previous exercise and ensure consistent behavior.
 
-- In the _Dockerfile_, I chose to deploy a lightweight _micromamba_ container based on _mamba_ (which is an improved _conda_ but without the science packages, and the engine is made in C++ instead of Python), and from there I can manage the versions, dependencies, and environments for the Python packages. As with _conda_, _micromamba_ can cross-fetch dependencies and build packages.
-- In the _docker-compose.yaml_, I've changed the names and versions of the images to be the same as in the testing environment.
-- I've changed the network implementation in the _docker-compose.yaml_ from _links_ to _network_ as recommended by the official documentation and created the respective aliases for each service.
-- I had to add the _PYTHONPATH_ variable in the _docker-compose.yaml_ for the modules to be correctly initialized without altering the application source code.
+- In the `Dockerfile`, I chose to deploy a lightweight `micromamba` container based on `mamba` (which is an improved `conda` but without the science packages, and the engine is made in C++ instead of Python), and from there I can manage the versions, dependencies, and environments for the Python packages. As with `conda`, `micromamba` can cross-fetch dependencies and build packages.
+- In the `docker-compose.yaml`, I've changed the names and versions of the images to be the same as in the testing environment.
+- I've changed the network implementation in the `docker-compose.yaml` from `links` to `network` as recommended by the official documentation and created the respective aliases for each service.
+- I had to add the `PYTHONPATH` variable in the `docker-compose.yaml` for the modules to be correctly initialized without altering the application source code.
 
 ### BlazeMeter
 
@@ -325,10 +325,10 @@ BlazeMeter [test output 3](https://a.blazemeter.com/app/?public-token=516OBeX57t
 
 ## KinD + Helm
 
-- After installation and setup of _KinD_, _kubectl_ and _Helm_, the deployment is pretty straightforward. It's just a matter of passing a _Cart_ (with its respective _Values.yaml_ and appropriate variables) file to _Helm_ and it does all the rest with magic!
+- After installation and setup of _KinD_, `kubectl` and _Helm_, the deployment is pretty straightforward. It's just a matter of passing a _Chart_ (with its respective `Values.yaml` and appropriate variables) file to _Helm_ and it does all the rest with magic!
 - The Charts were updated to use the Docker images I created in the previous exercise.
-- _Bash_ scripts were created to prepare all the underlying infrastructure in _KinD_ and _Helm_, with rollback steps in case of failure and they can all be called via make commands defined in the _k8s/Makefile_.
-- The application images need to be cloned to KinD internal image registry and this is done by the _make deploy_ step.
+- _Bash_ scripts were created to prepare all the underlying infrastructure in _KinD_ and _Helm_, with rollback steps in case of failure and they can all be called via make commands defined in the `k8s/Makefile`.
+- The application images need to be cloned to KinD internal image registry and this is done by the `make deploy` step.
 
 ### BlazeMeter
 
@@ -344,3 +344,7 @@ BlazeMeter [test output 4](https://a.blazemeter.com/app/?public-token=516OBeX57t
 ### Deployment
 
 - The deployment of the services and the application can also be called by the Makefile and its options are set in the `manifest.yaml` file.
+- The `nameko-devex` can't be deployed as is in Epinio (or in any other Buildpack based solution whatsoever) because the builders can't handle different channels (like _conda-forge_ and _PyPI_)in the `conda` `environment.yml` file and the application is built upon this.
+  - I've tried to convert it to a `pip` enviroment based application but it didn't work.
+  - One solution to try solve this issue is to make a customized `builder` image for this purpose.
+- I then went with a sample application that can be deployed in Epinio and connect to its available services while leveraging the same automated structure to install everything.
