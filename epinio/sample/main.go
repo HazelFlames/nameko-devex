@@ -4,23 +4,22 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
 )
 
-func passwdExtraction() string {
-	matches, err := filepath.Glob("/configuration/*/postgres-password")
-	CheckError(err)
+// func passwdExtraction() string {
+// 	matches, err := filepath.Glob("/configuration/*/postgres-password")
+// 	CheckError(err)
 
-	fmt.Println(matches)
+// 	fmt.Println(matches)
 
-	buf, err := os.ReadFile(matches[0])
-	CheckError(err)
+// 	buf, err := os.ReadFile(matches[0])
+// 	CheckError(err)
 
-	return string(buf)
-}
+// 	return string(buf)
+// }
 
 func validateEnvironment() Connection {
 	_, exs := os.LookupEnv("EPINIO")
@@ -37,8 +36,8 @@ func validateEnvironment() Connection {
 	} else {
 		connectionParams := Connection{
 			"todos",
-			"workspace-postgres-postgres.workspace.svc.cluster.local",
-			passwdExtraction(),
+			"ENDEREÇO INTERNO DO POSTGRES AQUI",
+			"password",
 			5432,
 			"postgres",
 		}
