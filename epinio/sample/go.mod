@@ -1,4 +1,4 @@
-module hazelflames/todo
+module hazelflames/todos
 
 go 1.19
 

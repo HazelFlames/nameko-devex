@@ -1,6 +1,7 @@
 SHELL = /bin/bash
 
-APPNAME ?= nameko
+#APPNAME ?= nameko
+APPNAME ?= todos
 NAMESPACE ?= epinio
 WORKSPACE ?= workspace
 

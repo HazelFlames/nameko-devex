@@ -1,8 +1,11 @@
-name: todo
+name: todos
 configuration:
   instances: 1
   environment:
     EPINIO: "yes"
+    POSTGRES_HOST: XXXX
     PORT: "8080"
+staging:
+  builder: "gcr.io/buildpacks/builder"
 origin:
   path: .

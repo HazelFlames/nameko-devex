@@ -27,28 +27,29 @@ else
   exit 1
 fi
 
-if epinio service create rabbitmq-dev rabbit
-then
-  echo -e "RabbitMQ deployed.\n\nStarting database deployment...\n"
-else
-  echo -e "Couldn't deploy RabbitMQ!\nAborting...\n"
-  exit 1
-fi
+# if epinio service create rabbitmq-dev rabbit
+# then
+#   echo -e "RabbitMQ deployed.\n\nStarting database deployment...\n"
+# else
+#   echo -e "Couldn't deploy RabbitMQ!\nAborting...\n"
+#   exit 1
+# fi
 
 if epinio service create postgresql-dev postgres
 then
-  echo -e "PostgreSQL deployed!\n\nStarting cache deployment...\n"
+  #echo -e "PostgreSQL deployed!\n\nStarting cache deployment...\n"
+  echo -e "PostgreSQL deployed!\n\nAll requirements deployed!\n"
 else
   echo -e "Couldn't deploy PostgreSQL!\n Aborting...\n"
   exit 1
 fi
 
-if epinio service create redis-dev redis
-then
-  echo -e "Redis deployed!\n\nAll requirements deployed!\n"
-else
-  echo -e "Couldn't deploy Redis!\n Aborting...\n"
-  exit 1
-fi
+# if epinio service create redis-dev redis
+# then
+#   echo -e "Redis deployed!\n\nAll requirements deployed!\n"
+# else
+#   echo -e "Couldn't deploy Redis!\n Aborting...\n"
+#   exit 1
+# fi
 
 exit 0

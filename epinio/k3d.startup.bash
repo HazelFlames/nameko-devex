@@ -59,7 +59,7 @@ sleep 2m
 
 if helm repo add epinio https://epinio.github.io/helm-charts
 then
-  echo -e "Epinio charts repository added!\n\nGetting Values.yaml..."
+  echo -e "Epinio charts repository added!\n\nSetting up the helm repository for cert-manager..."
 else
   echo -e "Addition of charts repository failed!\nAborting...\n"
   exit 1
