@@ -340,12 +340,16 @@ BlazeMeter [test output 4](https://a.blazemeter.com/app/?public-token=516OBeX57t
 
 - A K3d cluster was created as per Henrique's recommendations following the official documentation from Epinio.
 - The creation is automated and can be called by the Makefile inside the `epinio` folder.
+  - It deploys the K3d cluster, the internal database service, and then the application.
 
 ### Deployment
 
 - The deployment of the services and the application can also be called by the Makefile and its options are set in the `manifest.yaml` file.
-- The `nameko-devex` can't be deployed as is in Epinio (or in any other Buildpack based solution whatsoever) because the builders can't handle different channels (like _conda-forge_ and _PyPI_)in the `conda` `environment.yml` file and the application is built upon this.
-  - I've tried to convert it to a `pip` enviroment based application but it didn't work.
-  - One solution to try solve this issue is to make a customized `builder` image for this purpose.
+- The `nameko-devex` can't be deployed as is in Epinio (or in any other Buildpack-based solution whatsoever) because the builders can't handle different channels (like _conda-forge_ and _PyPI_) in the `conda` `environment.yml` file and the application is built upon this.
+  - I've tried to convert it to a `pip` environment based application but it didn't work.
+  - One solution to try to solve this issue is to make a customized `builder` image for this purpose.
   - I could use the ready-to-go application image built in the _Docker Compose_ exercise, but it kind of defeats the purpose of using a tool like Epinio, which can build the entire application from the source code directly.
-- I then went with a sample application that can be deployed in Epinio and connect to its available services while leveraging the same automated structure to install everything.
+- I then went with a simple "To-do list" application written in Go, that can be deployed in Epinio and connected to its available services while leveraging the same automated structure to install everything.
+  - It leverages the _Services_ structure provided by Epinio to deploy a PostgreSQL database.
+  - With Epinio CLI, the internal address that the application will use to connect to the service can be extracted and passed on to runtime via environment variables.
+  - The database and the tables are created and verified by the application.
