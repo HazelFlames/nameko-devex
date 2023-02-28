@@ -1,4 +1,4 @@
-# CUSTOMIZATIONS*conda*
+# CUSTOMIZATIONS
 
 ## _conda_/_mamba_ environment
 
@@ -353,3 +353,9 @@ BlazeMeter [test output 4](https://a.blazemeter.com/app/?public-token=516OBeX57t
   - It leverages the _Services_ structure provided by Epinio to deploy a PostgreSQL database.
   - With Epinio CLI, the internal address that the application will use to connect to the service can be extracted and passed on to runtime via environment variables.
   - The database and the tables are created and verified by the application.
+
+###
+
+# UPDATE - Feb 28, 2023
+
+Found the issue. The Python Paketo Bildpack can't resolve the *`pip`* part from the `enrionment.yml` directly. So it's a matter of installing the `pip` dependencies after the application is deployed in Epinio but before it initializes (which is still a little awkward).
